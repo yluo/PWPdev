@@ -1,0 +1,8 @@
+Development of PWP style 1D model with assimilation of float data
+Physical model and tracer modules
+
+David Nicholson
+dnicholson@whoi.edu
+
+refs:
+Glover, D. M., Jenkins, W. J. and Doney, S. C.: Modeling methods for marine science, Cambridge Univ Pr., 2011.Nicholson, D., Stanley, R. H. R., Barkan, E., Karl, D. M., Luz, B., Quay, P. D. and Doney, S. C.: Evaluating triple oxygen isotope estimates of gross primary production at the Hawaii Ocean Time-series and Bermuda Atlantic Time-series Study sites, J. Geophys. Res. Oceans, doi:10.1029/2010JC006856, 2012.Price, J. F., Weller, R. A. and Pinkel, R.: Diurnal cycling: observations and models of the upper ocean response to diurnal heating, cooling, and wind mixing, J. Geophys. Res., 91(C7), 8411–8427, 1986.Stanley, R. H. R., Jenkins, W. J. and Doney, S. C.: Quantifying seasonal air-sea gas exchange processes using noble gas time-series: A design experiment, J. Mar. Res., 64(2), 267–295, doi:10.1357/002224006777606452, 2006.
