@@ -1,0 +1,15 @@
+% set 18O/16O and 17O/16O to mixed layer value for all depths below m.l.
+
+
+r18ml = mean(Gas(1:mld)./Gas((1:mld),6));
+r17ml = mean(o17(1:mld)./Gas((1:mld),6));
+
+O2ml = mean(Gas(1:mld,6));
+%Gas(mld:end,6) = O2ml;
+
+o18(mld:end) = O2ml.*r18ml;
+o17(mld:end) = O2ml.*r17ml;
+
+o18(mld:end) = Gas(mld:end,6).*r18ml;
+o17(mld:end) = Gas(mld:end,6).*r17ml;
+

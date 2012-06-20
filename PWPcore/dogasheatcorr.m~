@@ -1,0 +1,13 @@
+% dogasheatcorr
+% ------------
+% gas is added to correct for lateral heat flux addition so that gas
+% saturation state and isotopic ratio is preserved for each gas
+
+Told=T-hhc(it)*vhec;
+
+% correct gases to new temperature
+for igas=1:ngas 
+    gas = 
+    gassat = Gas(:,igas)./gasmoleq(S,Told,ind2gas(igas));
+    Gas(:,igas) = gassat.*gasmoleq(S,T,ind2gas(igas));
+end

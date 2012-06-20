@@ -1,0 +1,112 @@
+%
+%		This loads all optional parameter values for pwp model run
+%
+%		z = depth (positive downward)
+%			dz = depth increment (2 m)
+%			zmax = 300m
+%		t = time (seconds)
+%			tyr = # seconds in a year
+%			dt = time step
+%			tmax = 3 years
+%		Kz = vertical turbulent diffusivity
+%
+bioON_OFF = 1;  % biology on/off switch for o2 isotopes.  1 = biology on, 0 = biology off  
+hamme=1; % flag to know whether used hamme solubilities (hamme=1) or not (hamme=0) (doesn't change code but just saves condition);
+diffexp=2/3; betaexp=1; % exponents used in air injection equation for diffusivity and for solubilitiy, see gasexcha
+zbscale=0.5; % scaling factor for depth of bubble penetration -- see inigasa for details
+mlt=zeros(5,5); mls=zeros(5,5); wct=zeros(5,5); wcs=zeros(5,5);
+
+addpath('/Users/Roo/Documents/WHOI Summer/PWPcoreR');
+
+fractopt = 2;
+
+trestconst=70; 
+% turn on t restore here
+t_rest = 1;
+
+% turn on variable GPP:NPP here 
+GPPvary = 0;
+GPPsd = 0;
+
+if GPPvary == 1
+    load GPP_NPP7;
+else
+    c14_2_GPP = 2.7;
+end
+
+% mixed layer only on/off option
+ml_iso = 1;
+
+% add deep bio to 200 m on/off option
+deep_bio = 0;
+
+% ventilate deep isopycnals towards O2 eq
+
+rest_deepO2 = 0;
+
+yrstart=1997.0347; yrstop=2003.38; EkpMaxDep = 550; 
+%yrstart=1997.0347; yrstop=1998.38; EkpMaxDep = 550; 
+
+% 1 for  QSCAT
+Qwinds = 1;
+
+if Qwinds == 0;
+    gasexfact = 0.795; %
+    Ac = 3.1E-3; % for sense study -- if combine with below ap then same amoutn of ap but 0,25,50,75,100 Ap
+    Ap = 1.27E5; % original values -- based o u10 = 10 m/s
+    
+elseif Qwinds == 1;
+    gasexfact = 0.9332;
+    Ac = 9.1E-11./2;
+    Ap = 2.3E-3./2;
+    % Ac = 4.5386E-3./2; % for sense study -- if combine with below ap then same amoutn of ap but 0,25,50,75,100 Ap
+    % Ap = 1.186E5./2;% original values -- based o u10 = 10 m/s
+else
+    error('set Qwinds = 1 or 0');
+end
+
+
+oxyamp =  2.5;
+oxycons= 18; % magnitude of biological consumption -- integrated
+
+% Ekman heat transport (W/m2)
+%ampEkmHeatConv = [-60 -55 -50 -45 -40 -30 -20];
+ampEkmHeatConv = -28;
+
+nEk = length(ampEkmHeatConv);
+%EkmHeatConv = 12;
+
+
+% power of piston velocity
+pvpower = 2; 
+LowPassFactor = 1E-5;
+
+% Depth range of lateral heat flux (in 100's of meters)
+ampVHEC= 0.5;
+nVH = length(ampVHEC);
+% Ekman salt convergence due to fresh water downward pumping
+EkmSaltConv = 1.75E-6;  
+
+% Vertical diffusivity (m2/s)
+% ampKz=[2 3 4 5 6 8 9 10]*1E-5;
+
+ampKz = 8*1E-5;
+nKz = length(ampKz);
+
+TracerDiffFactor = 1;
+
+Trms = zeros(nEk,nVH,nKz);
+
+for iEk = 1:nEk
+    EkmHeatConv = ampEkmHeatConv(iEk);
+    for iVH = 1:nVH
+        VHEC = ampVHEC(iVH);
+        for iKz = 1:nKz
+            Kz = ampKz(iKz);
+            pwpb;
+            Trms(iEk,iVH,iKz) = T_rms;
+        end
+    end
+end
+save('RMS','Trms');
+
