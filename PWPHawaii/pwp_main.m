@@ -18,7 +18,7 @@ addpath(core_path,0);
 % list of tracers to be run
 % -------------------------------------------------------------------------
 
-floatfile = '6391Bermuda.mat';
+floatfile = 'Bermuda.mat';
 % specify which tracers to include here
 %tracer_name = {'Ar','O2','O18','O17'};
 tracer_name = {'O2'};

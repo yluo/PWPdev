@@ -12,13 +12,13 @@ float.lon_mean = mean(float.lon(5,:));
 [~,float.lat] = findprofile(data,z,find(strcmp('lat',data_header)));
 float.lat_mean = mean(float.lat(5,:));
 [~,float.T] = findprofile(data,z,find(strcmp('T',data_header)));
-T_float(1:4,:) = repmat(float.T(5,:),4,1);
+float.T(1:4,:) = repmat(float.T(5,:),4,1);
 [~,float.S] = findprofile(data,z,find(strcmp('S',data_header)));
-S_float(1:4,:) = repmat(float.S(5,:),4,1);
+float.S(1:4,:) = repmat(float.S(5,:),4,1);
 [~,float.t] = findprofile(data,z,find(strcmp('yrdate',data_header)));
 float.t(1:4,:) = repmat(float.t(5,:),4,1);
 
-ndives = size(T_float,2);
+ndives = size(float.T,2);
 float.tr = zeros(nz,ndives,ntracers);
 for ii = 1:nactive
     tr = float_tracers{ii};

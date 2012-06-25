@@ -8,6 +8,6 @@
 try
     load forcing.mat;
 catch
-    F = get_forcing(ncep_path,float.lat(5,:),float.lon(5,:),float.t(5,:));
+    F = get_forcing(ncep_path,lat_float(5,:),lon_float(5,:),[yrstart yrstop]);
 end
-latitude = float.lat_mean;
+latitude = laFLT;

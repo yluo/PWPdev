@@ -199,7 +199,7 @@ tintv = 1;%tday./dt;
 tintv=round(tday./(dt.*tintv));	NumPerYear = 48;	% sampling interval = #/month
 
 % index of float profile times
-tprofind = round(interp1(t,1:length(t),t_float(1,:)));
+tprofind = round(interp1(t,1:length(t),float.t(1,:)));
 
 % -------------------------------------------------------------------------
 %		rotation matrix for velocity/momemtum

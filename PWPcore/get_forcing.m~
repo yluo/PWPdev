@@ -23,6 +23,8 @@ yr_rng = [yrvec(1,1) yrvec(end,1)];
 % make all longitudes positive
 lon(lon < 0) = lon(lon < 0) + 360;
 
+% meanm from mapping toolbox
+[latmean,lonmean] = meanm(lat,lon);
 
 % initialize final output struct variables
 F.u10m = [];
@@ -148,25 +150,20 @@ for yr = yr_rng(1):yr_rng(2)
     % calculate curl
     %
     % Coordinate transform from deg to km
-    %reflon = mean(lonslab);
-    %reflat = mean(latslab);
-    % meanm from mapping toolbox
-    [latmean,lonmean] = meanm(latyr,lonyr);
+    reflon = mean(lonslab);
+    reflat = mean(latslab);
     % calculate distance between longitudes @ reflat
-    x_scale = distance(latmean,lonslab(1),latmean,lonslab(end))./(lonslab(end)-lonslab(1));
+    x_scale = distance(reflat,lonslab(1),reflat,lonslab(end))./(lonslab(end)-lonslab(1));
     %x_dist and y_dist in meters
-    x_dist = 1000*deg2km(lonslab-lonmean).*x_scale;
-    y_dist = 1000*deg2km(latslab-latmean);
+    x_dist = 1000*deg2km(lonslab-reflon).*x_scale;
+    y_dist = 1000*deg2km(latslab-reflat);
     [X,Y] = meshgrid(y_dist,x_dist);
     
     % linearly interpolate latitude and longitude to ncep time variable
     % for ncep time out of range of observations, reference lat and lon are
     % used
-    
-    %%%!!! need to grab fenceposts from previous and following year for smooth interpolation....
-    
-    latint = interp1(dn_tyr,latyr,dntime,'linear',latmean);
-    lonint = interp1(dn_tyr,lonyr,dntime,'linear',lonmean);
+    latint = interp1(dn_tyr,latyr,dntime,'linear',reflat);
+    lonint = interp1(dn_tyr,lonyr,dntime,'linear',reflon);
     for jj = 1:nt
         [~, ila] = min(abs(latslab-latint(jj)));
         [~, ilo] = min(abs(lonslab-lonint(jj)));

@@ -113,7 +113,7 @@ wspeed=interp1(F.DateTime,wspeed,t,'linear');
 % -------------------------------------------------------------------------
 
 htfact=hcapy*dt*j2cal/dz;	% converts to temperature change in cell
-TotHeat = F.nLHTFL + F.nSHTFL + F.nLWRS + F.nSWRS;
+TotHeat = F.LHTFL + F.SHTFL + F.nLWRS + F.nSWRS;
 ResidualHeat = csaps(F.DateTime,TotHeat,LowPassFactor,F.DateTime);  % use lowpassed heat offset
 %ResidualHeat = csaps(DateTime,TotHeat,0.00,DateTime);  % use lowpassed heat offset
 %NetHeatOffset = EkmHeatConv - ResidualHeat;
@@ -129,13 +129,13 @@ NetHeatOffset = EkmHeatConv- 0.*ResidualHeat;
 % data for this locale partly compensated for ekman heat convergence
 % (associated with downwelling of warm surface water)
 rhf=-F.nSWRS*htfact; rhf=interp1(F.DateTime,rhf,t,'linear');
-thf=-(F.nLWRS + F.nLHTFL + F.nSHTFL)*htfact; thf=interp1(F.DateTime,thf,t,'linear');
+thf=-(F.nLWRS + F.LHTFL + F.SHTFL)*htfact; thf=interp1(F.DateTime,thf,t,'linear');
 hhc=-interp1(F.DateTime,NetHeatOffset*htfact,t,'linear');
-slp=interp1(F.DateTime,F.PRES/atm_Pa,t,'linear');     % compute/interpolate sea level pressure pascals -> atmospheres
+slp=interp1(DateTime,F.PRES/atm_Pa,t,'linear');     % compute/interpolate sea level pressure pascals -> atmospheres
 % relative humidity in mm Hg?
 ph2o=F.RHUM/100.*Humidity(F.AIRT-273)/760; % compute partial pressure of water in atm
 ph2o=interp1(F.DateTime,ph2o,t,'linear'); 
-patmdry=slp-ph2o; % pressure of dry air in atm -- used in gasexhak
+patmdry=F.slp-ph2o; % pressure of dry air in atm -- used in gasexhak
 vhec=zeros(zmax/dz,1);
 if VHEC ~= 0 
     ndepvhec=100*VHEC/dz;
@@ -173,8 +173,8 @@ hfactor=540 * 1000 / j2cal;	% converts watts to kg/s
 %		over the period, assuming that this is achieved by lateral FWF divergence
 % -------------------------------------------------------------------------
 
-NetEminusPOffset=csaps(F.DateTime,F.PRATE-F.nLHTFL/hfactor,LowPassFactor,F.DateTime);		% balance salt
-FWFlux=FWfact * (F.PRATE - F.nLHTFL/hfactor - NetEminusPOffset - EkmSaltConv); 
+NetEminusPOffset=csaps(F.DateTime,F.PRATE-F.LHTFL/hfactor,LowPassFactor,F.DateTime);		% balance salt
+FWFlux=FWfact * (F.PRATE - F.LHTFL/hfactor - NetEminusPOffset - EkmSaltConv); 
 FWFlux=1-FWFlux/1000;			% convert to salinity multiplier (1 - kg/m^3)
 FWFlux=interp1(F.DateTime,FWFlux,t,'linear');		% recast onto time vector
 
