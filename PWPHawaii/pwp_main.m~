@@ -9,6 +9,8 @@
 
 core_path = '/Users/Roo/Documents/PWPdev/PWPcore';
 ncep_path = '/Users/Roo/Documents/MATLAB/Datasets/ncep.reanalysis';
+float_path = '/Users/Roo/Documents/ArgoPWP/Floatdata';
+lib_path = '/Users/Roo/Documents/PWPdev/function_library';
 %
 % Path for core functions here
 addpath(core_path,0);
@@ -17,7 +19,7 @@ addpath(core_path,0);
 % list of tracers to be run
 % -------------------------------------------------------------------------
 
-floatfile = '6.mat';
+floatfile = 'Bermuda.mat';
 % specify which tracers to include here
 %tracer_name = {'Ar','O2','O18','O17'};
 tracer_name = {'O2'};
