@@ -16,7 +16,7 @@
 % -------------------------------------------------------------------------
 
 if pvpower==2		% pv (cm/h) = 0.31 * ws^2 * (Sc/660)^-1/2
-    pv = gasexfact.*k_W92(wspeed(it),660,0);
+    pv = gasexfact.*kgas(wspeed(it),660,'W92b');
 end
 
 wfact=(wspeed(it)-2.27)^3;          % this is the air injection factor as function of wind speed

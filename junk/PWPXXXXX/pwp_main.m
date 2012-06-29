@@ -7,14 +7,9 @@
 %
 % PWP paths
 
-% CHANGE pwp_root to point to where PWP is located on your local machine
-pwp_root = 'Users/Roo/Documents/';
-core_path = [pwp_root 'PWPdev/PWPcore'];
-lib_path = [pwp_root 'PWPdev/function_library'];
-
-% CHANGE these to point to files where ncep and argo float data is located
-float_path = '/Users/Roo/Documents/ArgoPWP/Floatdata';
+core_path = '/Users/Roo/Documents/PWPdev/PWPcore';
 ncep_path = '/Users/Roo/Documents/MATLAB/Datasets/ncep.reanalysis';
+float_path = '/Users/Roo/Documents/ArgoPWP/Floatdata';
 %
 % Path for core functions here
 addpath(core_path,0);
@@ -23,8 +18,7 @@ addpath(core_path,0);
 % list of tracers to be run
 % -------------------------------------------------------------------------
 
-%%% model currently running for bermuda...
-floatfile = 'Bermuda.mat';
+floatfile = '6391Bermuda.mat';
 % specify which tracers to include here
 %tracer_name = {'Ar','O2','O18','O17'};
 tracer_name = {'O2'};

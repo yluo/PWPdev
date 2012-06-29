@@ -15,20 +15,9 @@
 % Need to modify pvpower options:  only pvpower 2 is correct...
 % -------------------------------------------------------------------------
 
-if pvpower==3
-    pv=gasexfact.*2.0196e-6 * wspeed(it)^3;		% pv (cm/h) = 0.0283 * ws^3 * (Sc/660)^-1/2
-elseif pvpower==2
-    %pv=gasexfact.*2.2122e-5 * wspeed(it)^2;		% pv (cm/h) = 0.31 * ws^2 * (Sc/660)^-1/2
-    pv = gasexfact.*k_W92(wspeed(it),660,0);
-elseif pvpower==2.5
-    pv=gasexfact * 6.6867E-6 * wspeed(it)^2.5;  % pv (cm/hr)= -0.0937* ws^2.5 * (Sc/660)^-1/2
-    %Calculated constant by comparing wanninkhof cubic and quadratic
-elseif pvpower==1.5
-    pv=gasexfact * 5.8529e-005 * wspeed(it)^1.5;  % pv (cm/hr)= -0.0937* ws^2.5 * (Sc/660)^-1/2
-    %Calculated constant by comparing wanninkhof cubic and quadratic
-
+if pvpower==2		% pv (cm/h) = 0.31 * ws^2 * (Sc/660)^-1/2
+    pv = gasexfact.*kgas(wspeed(it),660,0);
 end
-
 
 wfact=(wspeed(it)-2.27)^3;          % this is the air injection factor as function of wind speed
 
@@ -44,12 +33,13 @@ end
 % cap17O2_eq:  Equilibrium cap17O as a function of temperature from Luz
 % (2009 (in press))
 %
-
 cap17eq = T(1).*0.6+1.8;
 
 % set equilibrium fractionation to equal cap17eq
 a18ge = 1+(-0.730 + 427./(T(1)+273.15))./1000;  % from Benson and Kraus (1980)
 a17ge = a18ge.^lambda.* (cap17eq./1e6+1);
+a36ge = a18ge.^2;
+a35ge = a18ge*a17ge;
 
 
 % includes contribution of windspeed, patm, and T
@@ -58,23 +48,30 @@ ai=wfact.*patmdry(it)*atm_Pa/(R*(273.15+T(1)));
 for igas=1:ngas     % do all the gases
    
     % correct rates for equilibrium and kinetic fractionation factors
-    
-    if strcmp(ind2tr(igas),'O17')
+    gas = gases{igas};
+    if strcmp(gas,'O17')
         [Sc, D] = schmidt(S(1),T(1),'O2');
-        Geq = gasmoleq(S(1),T(1),'O2');
+        Geq = a17ge.*gasmoleq(S(1),T(1),'O2');
         Sc = Sc.*a17gek.^(-1/2);
         D =  D.*a17gek.^(1/2);
-        Geq = a17ge.*Geq;
-        
-    elseif strcmp(ind2gas(igas),'O18')
+    elseif strcmp(gas,'O18')
         [Sc, D] = schmidt(S(1),T(1),'O2');
-        Geq = gasmoleq(S(1),T(1),'O2');
+        Geq = a18ge.*gasmoleq(S(1),T(1),'O2');
         Sc = Sc.*a18gek.^(-1/2);
         D =  D.*a18gek.^(1/2);
-        Geq = a18ge.*Geq;
+    elseif strcmp(gas,'O36')
+        [Sc, D] = schmidt(S(1),T(1),'O2');
+        Geq = a36ge.*gasmoleq(S(1),T(1),'O2');
+        Sc = Sc.*a36gek.^(-1/2);
+        D =  D.*a36gek.^(1/2);
+    elseif strcmp(gas,'O35')
+        [Sc, D] = schmidt(S(1),T(1),'O2');
+        Geq = a35ge.*gasmoleq(S(1),T(1),'O2');
+        Sc = Sc.*a35gek.^(-1/2);
+        D =  D.*a35gek.^(1/2);
     else   
-        [Sc, D] = schmidt(S(1),T(1),ind2gas(igas));
-        Geq = gasmoleq(S(1),T(1),ind2gas(igas));
+        [Sc, D] = schmidt(S(1),T(1),gas);
+        Geq = gasmoleq(S(1),T(1),gas);
         
     end
     % correct gas transfer for schmidt number
@@ -91,11 +88,11 @@ for igas=1:ngas     % do all the gases
 
     % need to use asco ^ 4/3 because asco is Sc^-(1/2) and i thoguht it would be easier to use existing code...)
     apflux(igas)=ai.*Ap.*(D.^diffexp).*((22.4.*Geq./(xG(igas).*Sig(1))).^betaexp)...
-        .*(phydro(it)./patmdry(it)-Gas(1,igas)./Geq+1); % multiply by scaling factor Ap, beta raised to some power betaexp and diffusivity raised to some power diffexp
+        .*(phydro(it)./patmdry(it)-Tracer(1,tr2ind(gas))./Geq+1); % multiply by scaling factor Ap, beta raised to some power betaexp and diffusivity raised to some power diffexp
     % multiply by (phydro/P-f)=(phydro/P-Cl/Cg+1) see keeling for explanation
     
-    geflux(igas)=-gpv*(Gas(1,igas)-slp(it)*Geq); % calculates the GE flux as diagnostic
-    Gas(1:mld,igas)=Gas(1:mld,igas) + (geflux(igas)+acflux(igas)+apflux(igas))*dt/(dz*mld); %change in conc = old conc + change due to gas exchanve, complete trapping, partial trapping
+    geflux(igas)=-gpv*(Tracer(1,tr2ind(gas))-slp(it)*Geq); % calculates the GE flux as diagnostic
+    Tracer(1:mld,tr2ind(gas))=Tracer(1:mld,tr2ind(gas)) + (geflux(igas)+acflux(igas)+apflux(igas))*dt/(dz*mld); %change in conc = old conc + change due to gas exchanve, complete trapping, partial trapping
     %the dt/dz/mld are to convert flux to a concentration change.
 
     % now accumulate the gas fluxes
